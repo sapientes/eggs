@@ -1,0 +1,40 @@
+# Builder is ubuntu-based because we need i386 libs
+FROM steamcmd/steamcmd:ubuntu-22 as builder
+
+# Install prerequisites to download steamcmd
+RUN apt-get update && apt-get install -yqq curl tar
+
+WORKDIR /root/installer
+RUN curl -sqL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar zxvf -
+
+FROM ghcr.io/parkervcp/yolks:dotnet_8
+ARG TMOD_VERSION=v2025.07.3.0
+
+USER root
+
+# Copy steamcmd and its required libs from the builder
+COPY --from=builder /root/installer/steamcmd.sh /usr/lib/games/steam/
+COPY --from=builder /root/installer/linux32/steamcmd /usr/lib/games/steam/
+COPY --from=builder /usr/games/steamcmd /usr/bin/steamcmd
+COPY --from=builder /etc/ssl/certs /etc/ssl/certs
+COPY --from=builder /lib/i386-linux-gnu /lib/
+COPY --from=builder /root/installer/linux32/libstdc++.so.6 /lib/
+RUN chown -R root:root /usr/bin/ /etc/ssl/certs /lib/ /usr/lib/
+
+RUN apt-get update && apt-get install -yqq wget unzip libsdl2-2.0-0
+
+WORKDIR /terraria-server
+
+COPY entrypoint.sh .
+RUN steamcmd /terraria-server +login anonymous +quit
+
+RUN wget https://github.com/tModLoader/tModLoader/releases/download/${TMOD_VERSION}/tModLoader.zip \
+  && unzip -o tModLoader.zip \
+  && rm tModLoader.zip \
+  && chmod a+rx **/*.sh
+
+USER container
+
+EXPOSE 7777
+VOLUME ["/home/container"]
+ENTRYPOINT ["./entrypoint.sh"]

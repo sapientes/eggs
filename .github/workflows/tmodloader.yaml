@@ -1,0 +1,61 @@
+name: Docker image
+
+on:
+  workflow_dispatch:
+  schedule:
+    # See https://crontab.guru/monthly
+    - cron: 0 0 1 * *
+     
+permissions:
+  packages: write
+ 
+env:
+  EGG_NAME: tmodloader
+  IMAGE_REGISTRY: ghcr.io/sapientes
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - "arm64"
+          - "amd64"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - uses: pozetroninc/github-action-get-latest-release@master
+        id: version
+        with:
+          owner: tmodloader
+          repo: tmodloader
+          excludes: prerelease, draft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        id: image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ github.event.repository.name }}
+          tags: tmodloader-${{ matrix.platform }} tmodloader-${{ steps.version.outputs.release }}-${{ matrix.platform }}
+          context: egg-tmodloader
+          platforms: linux/${{ matrix.platform }}
+          build-args: |
+            TMOD_VERSION=${{ steps.version.outputs.release }}
+
+      - name: Push image to GHCR
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.image.outputs.image }}
+          tags: ${{ steps.image.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
