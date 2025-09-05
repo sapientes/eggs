@@ -1,4 +1,4 @@
-name: Docker image
+name: tmoaloader image
 
 on:
   workflow_dispatch:
@@ -47,6 +47,7 @@ jobs:
           tags: tmodloader-${{ matrix.platform }} tmodloader-${{ steps.version.outputs.release }}-${{ matrix.platform }}
           context: egg-tmodloader
           platforms: linux/${{ matrix.platform }}
+          containerfiles: egg-tmodloader/Containerfile
           build-args: |
             TMOD_VERSION=${{ steps.version.outputs.release }}
 
