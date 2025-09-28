@@ -37,4 +37,4 @@ USER container
 
 EXPOSE 7777
 VOLUME ["/home/container"]
-ENTRYPOINT ["sh", "-c", "--"]
+ENTRYPOINT ["/bin/bash", "-c"]
