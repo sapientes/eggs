@@ -32,7 +32,7 @@ RUN wget https://github.com/tModLoader/tModLoader/releases/download/${TMOD_VERSI
   && unzip -o tModLoader.zip \
   && rm tModLoader.zip \
   && chmod a+rx **/*.sh \
-  && sed -i 's|LaunchLogs="$root_dir/tModLoader-Logs"|LaunchLogs="~/logs"|' LaunchUtils/ScriptCaller.sh
+  && sed -i 's|LaunchLogs="$root_dir/tModLoader-Logs"|LaunchLogs="$HOME/logs"|' LaunchUtils/ScriptCaller.sh
 
 USER container
 
