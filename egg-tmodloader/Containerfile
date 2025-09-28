@@ -37,4 +37,4 @@ USER container
 
 EXPOSE 7777
 VOLUME ["/home/container"]
-ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+ENTRYPOINT ["/usr/bin/tini", "-g", "sh", "--"]
