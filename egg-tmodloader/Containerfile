@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -yqq curl tar
 WORKDIR /root/installer
 RUN curl -sqL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar zxvf -
 
-FROM ghcr.io/parkervcp/yolks:dotnet_9
+FROM ghcr.io/parkervcp/yolks:dotnet_8
 USER root
 
 # Copy steamcmd and its required libs from the builder
