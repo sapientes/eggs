@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": null
     },
-    "exported_at": "2025-09-30T08:57:36+00:00",
+    "exported_at": "2025-09-30T09:21:00+00:00",
     "name": "tModloader",
     "author": "parker@parkervcp.com",
     "uuid": "253b07ab-ce86-412c-a285-39c16ba6c62b",
@@ -25,7 +25,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Vanilla tModloader Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n## install packages to get version and download links\r\n\r\nurl=\"\"\r\n\r\nif [[ -z \"$VERSION\" ]] || [[ \"$VERSION\" -eq \"latest\" ]]; then\r\n    url=\"https:\/\/github.com\/tModLoader\/tModLoader\/releases\/latest\/download\/tModLoader.zip\"\r\nelse\r\n    url=\"https:\/\/github.com\/tModLoader\/tModLoader\/releases\/download\/${VERSION}\/tModLoader.zip\"\r\nfi\r\n\r\ncd \/mnt\/server\r\n\r\nwget \"$url\"\r\nunzip -o tModLoader.zip\r\nrm tModLoader.zip\r\nchmod a+rx **\/*.sh\r\n\r\n# Remove unneeded files\r\nrm -rf DedicatedServerUtils LaunchUtils PlatformVariantLibs tModPorter RecentGitHubCommits.txt *.bat *.sh\r\n\r\necho 'dotnet tModLoader.dll -server \"$@\"' > tModLoaderServer\r\nchmod +x tModLoaderServer\r\n\r\necho -e 'TMOD_AUTODOWNLOAD=\"\"\\nTMOD_ENABLEDMODS=\"\"' > .env\r\n\r\n## using config for difficulty as the startup parameter does not work -> config parser\r\nsed -i 's\/#difficulty\/difficulty\/' serverconfig.txt\r\n\r\n## install end\r\necho \"-----------------------------------------\"\r\necho \"Installation completed...\"\r\necho \"-----------------------------------------\"",
+            "script": "#!\/bin\/bash\r\n# Vanilla tModloader Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n## install packages to get version and download links\r\n\r\nurl=\"\"\r\n\r\nif [[ -z \"$VERSION\" ]] || [[ \"$VERSION\" -eq \"latest\" ]]; then\r\n    url=\"https:\/\/github.com\/tModLoader\/tModLoader\/releases\/latest\/download\/tModLoader.zip\"\r\nelse\r\n    url=\"https:\/\/github.com\/tModLoader\/tModLoader\/releases\/download\/${VERSION}\/tModLoader.zip\"\r\nfi\r\n\r\ncd \/mnt\/server\r\n\r\nwget \"$url\"\r\nunzip -o tModLoader.zip\r\nrm tModLoader.zip\r\nchmod a+rx **\/*.sh\r\n\r\n# Remove unneeded files\r\nrm -rf DedicatedServerUtils LaunchUtils PlatformVariantLibs tModPorter RecentGitHubCommits.txt *.bat *.sh\r\n\r\necho 'dotnet tModLoader.dll -server \"$@\"' > tModLoaderServer\r\nchmod +x tModLoaderServer\r\n\r\necho -e 'TMOD_AUTODOWNLOAD=\"\"\\nTMOD_ENABLEDMODS=\"\"' > .env\r\n\r\n# Symlink sdl2\r\n# TODO: amd64 support\r\nln -s \/usr\/lib\/aarch64-linux-gnu\/libSDL2-2.0.so.0 Libraries\/Native\/Linux\/libSDL2-2.0.so.0\r\n\r\n## using config for difficulty as the startup parameter does not work -> config parser\r\nsed -i 's\/#difficulty\/difficulty\/' serverconfig.txt\r\n\r\n## install end\r\necho \"-----------------------------------------\"\r\necho \"Installation completed...\"\r\necho \"-----------------------------------------\"",
             "container": "ghcr.io\/parkervcp\/installers:debian",
             "entrypoint": "bash"
         }
